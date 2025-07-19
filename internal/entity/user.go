@@ -25,7 +25,7 @@ type User struct {
 	ID       int    `json:"-"`
 	Username string `json:"username"`
 	Email    string `json:"email"`
-	Password string `json:"password"`
+	Password string `json:"-"`
 }
 
 // ValidateEmail checks if the user's email is valid.
