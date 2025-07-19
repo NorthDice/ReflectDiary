@@ -8,5 +8,5 @@ type PasswordService interface {
 
 	// ComparePassword compares a hashed password with a plaintext password.
 	// Returns true if they match, false otherwise, along with any error encountered.
-	ComparePassword(hashedPassword string, password string) (bool, error)
+	ComparePassword(hashedPassword string, password string) error
 }

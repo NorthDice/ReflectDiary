@@ -29,41 +29,41 @@ type User struct {
 }
 
 // ValidateEmail checks if the user's email is valid.
-// Returns true and nil if valid.
+// Returns nil if valid.
 
-func (u *User) ValidateEmail() (bool, error) {
+func (u *User) ValidateEmail() error {
 	if u.Email == IsEmptyString {
-		return false, fmt.Errorf("email is required")
+		return fmt.Errorf("email is required")
 	}
 
 	if _, err := mail.ParseAddress(u.Email); err != nil {
-		return false, fmt.Errorf("invalid email format")
+		return fmt.Errorf("invalid email format")
 	}
 
-	return true, nil
+	return nil
 }
 
 // ValidateUsername checks that the username:
 // - contains only latin letters, digits, and characters ! _ -
 // - has a valid length.
 
-func (u *User) ValidateUsername() (bool, error) {
+func (u *User) ValidateUsername() error {
 	re := regexp.MustCompile(`^[a-zA-Z0-9!_-]+$`)
 
 	if u.Username == IsEmptyString {
-		return false, fmt.Errorf("username is required")
+		return fmt.Errorf("username is required")
 	}
 	if len(u.Username) < MinUsernameLength {
-		return false, fmt.Errorf("username must be at least %d characters long", MinUsernameLength)
+		return fmt.Errorf("username must be at least %d characters long", MinUsernameLength)
 	}
 	if len(u.Username) > MaxUsernameLength {
-		return false, fmt.Errorf("username must be at most %d characters long", MaxUsernameLength)
+		return fmt.Errorf("username must be at most %d characters long", MaxUsernameLength)
 	}
 	if !re.MatchString(u.Username) {
-		return false, fmt.Errorf("username can contain only latin letters, digits, and characters: ! _ -")
+		return fmt.Errorf("username can contain only latin letters, digits, and characters: ! _ -")
 	}
 
-	return true, nil
+	return nil
 }
 
 // ValidatePassword checks that the password:
@@ -71,21 +71,21 @@ func (u *User) ValidateUsername() (bool, error) {
 // - has a valid length,
 // - contains only allowed characters: latin letters, digits, and ! _ @ .
 
-func (u *User) ValidatePassword() (bool, error) {
+func (u *User) ValidatePassword() error {
 	re := regexp.MustCompile(`^[a-zA-Z0-9!_@.]+$`)
 
 	if u.Password == IsEmptyString {
-		return false, fmt.Errorf("password cannot be empty")
+		return fmt.Errorf("password cannot be empty")
 	}
 	if len(u.Password) < MinPasswordLength {
-		return false, fmt.Errorf("password must be at least %d characters", MinPasswordLength)
+		return fmt.Errorf("password must be at least %d characters", MinPasswordLength)
 	}
 	if len(u.Password) > MaxPasswordLength {
-		return false, fmt.Errorf("password must be at most %d characters", MaxPasswordLength)
+		return fmt.Errorf("password must be at most %d characters", MaxPasswordLength)
 	}
 	if !re.MatchString(u.Password) {
-		return false, fmt.Errorf("password can contain only latin letters, digits, and characters: ! _ @ .")
+		return fmt.Errorf("password can contain only latin letters, digits, and characters: ! _ @ .")
 	}
 
-	return true, nil
+	return nil
 }

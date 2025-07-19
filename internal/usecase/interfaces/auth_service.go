@@ -5,7 +5,7 @@ package interfaces
 type AuthService interface {
 	// GenerateToken creates a new authentication token for the given username.
 	// Returns the generated token string or an error if token creation fails.
-	GenerateToken(username string) (string, error)
+	GenerateToken(userID int) (string, error)
 
 	// ValidateToken verifies the provided token string.
 	// Returns the token if valid,
