@@ -6,10 +6,11 @@ import (
 )
 
 type Journal struct {
-	ID        int       `json:"-"`
-	Title     string    `json:"title"`
-	UserID    int       `json:"user_id"`
-	CreatedAt time.Time `json:"created_at"`
+	ID             int       `json:"-"`
+	Title          string    `json:"title"`
+	UserID         int       `json:"user_id"`
+	JournalEntries []Entries `json:"journal_entries"`
+	CreatedAt      time.Time `json:"created_at"`
 }
 
 func (j *Journal) ValidateTitle() (bool, error) {
