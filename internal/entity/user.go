@@ -7,9 +7,6 @@ import (
 )
 
 const (
-	// IsEmptyString represents an empty string, used as a semantic marker
-	IsEmptyString = ""
-
 	// MinPasswordLength defines the minimum allowed password length
 	MinPasswordLength = 6
 
