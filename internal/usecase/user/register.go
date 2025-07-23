@@ -1,7 +1,8 @@
 package user
 
 import (
-	"fmt"
+	"context"
+	domainerr "github.com/NorthDice/ReflectDiary/internal/domain/errors"
 	"github.com/NorthDice/ReflectDiary/internal/entity"
 	"github.com/NorthDice/ReflectDiary/internal/usecase/interfaces"
 )
@@ -48,7 +49,7 @@ func NewRegisterUseCase(
 // 4. Saves the new user to the repository,
 // 5. Generates an auth token,
 // 6. Returns the resulting user info with token.
-func (uc *RegisterUseCase) Register(req RegisterRequest) (*RegisterResponse, error) {
+func (uc *RegisterUseCase) Register(ctx context.Context, req RegisterRequest) (*RegisterResponse, error) {
 	user := &entity.User{
 		Email:    req.Email,
 		Username: req.Username,
@@ -67,9 +68,12 @@ func (uc *RegisterUseCase) Register(req RegisterRequest) (*RegisterResponse, err
 		return nil, err
 	}
 
-	existingUser, err := uc.userRepository.FindByEmail(user.Email)
-	if err == nil && existingUser != nil {
-		return nil, fmt.Errorf("user with email %s already exists", user.Email)
+	existingUser, err := uc.userRepository.FindByEmail(ctx, user.Email)
+	if err != nil {
+		return nil, err
+	}
+	if existingUser != nil {
+		return nil, domainerr.ErrUserAlreadyExists
 	}
 
 	hashedPassword, err := uc.passwordService.HashPassword(req.Password)
@@ -79,14 +83,14 @@ func (uc *RegisterUseCase) Register(req RegisterRequest) (*RegisterResponse, err
 
 	user.Password = hashedPassword
 
-	savedUserId, err := uc.userRepository.Save(user)
+	savedUserId, err := uc.userRepository.Save(ctx, user)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create user: %w", err)
+		return nil, err
 	}
 
-	token, err := uc.authService.GenerateToken(savedUserId)
+	token, err := uc.authService.GenerateToken(ctx, savedUserId)
 	if err != nil {
-		return nil, fmt.Errorf("failed to generate token: %w", err)
+		return nil, err
 	}
 
 	response := &RegisterResponse{

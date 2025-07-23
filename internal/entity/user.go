@@ -1,7 +1,7 @@
 package entity
 
 import (
-	"fmt"
+	domainerr "github.com/NorthDice/ReflectDiary/internal/domain/errors"
 	"net/mail"
 	"regexp"
 )
@@ -33,11 +33,11 @@ type User struct {
 
 func (u *User) ValidateEmail() error {
 	if u.Email == IsEmptyString {
-		return fmt.Errorf("email is required")
+		return domainerr.ErrEmailIsRequired
 	}
 
 	if _, err := mail.ParseAddress(u.Email); err != nil {
-		return fmt.Errorf("invalid email format")
+		return domainerr.ErrInvalidEmail
 	}
 
 	return nil
@@ -51,16 +51,16 @@ func (u *User) ValidateUsername() error {
 	re := regexp.MustCompile(`^[a-zA-Z0-9!_-]+$`)
 
 	if u.Username == IsEmptyString {
-		return fmt.Errorf("username is required")
+		return domainerr.ErrUsernameIsRequired
 	}
 	if len(u.Username) < MinUsernameLength {
-		return fmt.Errorf("username must be at least %d characters long", MinUsernameLength)
+		return domainerr.ErrInvalidUsernameMinConstraint
 	}
 	if len(u.Username) > MaxUsernameLength {
-		return fmt.Errorf("username must be at most %d characters long", MaxUsernameLength)
+		return domainerr.ErrInvalidUsernameMaxConstraint
 	}
 	if !re.MatchString(u.Username) {
-		return fmt.Errorf("username can contain only latin letters, digits, and characters: ! _ -")
+		return domainerr.ErrInvalidUsernameConstraint
 	}
 
 	return nil
@@ -75,16 +75,16 @@ func (u *User) ValidatePassword() error {
 	re := regexp.MustCompile(`^[a-zA-Z0-9!_@.]+$`)
 
 	if u.Password == IsEmptyString {
-		return fmt.Errorf("password cannot be empty")
+		return domainerr.ErrPasswordIsRequired
 	}
 	if len(u.Password) < MinPasswordLength {
-		return fmt.Errorf("password must be at least %d characters", MinPasswordLength)
+		return domainerr.ErrInvalidPasswordMinConstraint
 	}
 	if len(u.Password) > MaxPasswordLength {
-		return fmt.Errorf("password must be at most %d characters", MaxPasswordLength)
+		return domainerr.ErrInvalidPasswordMaxConstraint
 	}
 	if !re.MatchString(u.Password) {
-		return fmt.Errorf("password can contain only latin letters, digits, and characters: ! _ @ .")
+		return domainerr.ErrInvalidPasswordConstraint
 	}
 
 	return nil

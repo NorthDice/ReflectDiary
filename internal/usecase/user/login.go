@@ -1,6 +1,7 @@
 package user
 
 import (
+	"context"
 	"fmt"
 	"github.com/NorthDice/ReflectDiary/internal/entity"
 	"github.com/NorthDice/ReflectDiary/internal/usecase/interfaces"
@@ -29,7 +30,7 @@ type LoginUseCase struct {
 }
 
 // NewLoginUseCase creates a new instance of LoginUseCase.
-func (lu *LoginUseCase) NewLoginUseCase(
+func NewLoginUseCase(
 	userRepository interfaces.UserRepository,
 	passwordService interfaces.PasswordService,
 	authService interfaces.AuthService,
@@ -44,7 +45,7 @@ func (lu *LoginUseCase) NewLoginUseCase(
 // Login authenticates a user based on provided credentials.
 // It checks the email and password, compares the password hash,
 // generates a token if valid, and returns a login response.
-func (lu *LoginUseCase) Login(req LoginRequest) (*LoginResponse, error) {
+func (lu *LoginUseCase) Login(ctx context.Context, req LoginRequest) (*LoginResponse, error) {
 	if strings.TrimSpace(req.Email) == entity.IsEmptyString {
 		return nil, fmt.Errorf("email is required")
 	}
@@ -52,7 +53,7 @@ func (lu *LoginUseCase) Login(req LoginRequest) (*LoginResponse, error) {
 	if strings.TrimSpace(req.Password) == entity.IsEmptyString {
 		return nil, fmt.Errorf("password is required")
 	}
-	user, err := lu.userRepository.FindByEmail(req.Email)
+	user, err := lu.userRepository.FindByEmail(ctx, req.Email)
 	if err != nil {
 		return nil, fmt.Errorf("user not found")
 	}
@@ -61,7 +62,7 @@ func (lu *LoginUseCase) Login(req LoginRequest) (*LoginResponse, error) {
 		return nil, fmt.Errorf("password wrong")
 	}
 
-	token, err := lu.authService.GenerateToken(user.ID)
+	token, err := lu.authService.GenerateToken(ctx, user.ID)
 	if err != nil {
 		return nil, err
 	}

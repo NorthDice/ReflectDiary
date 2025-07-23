@@ -1,0 +1,19 @@
+package layout
+
+type BaseProps struct {
+    Title    string
+}
+
+templ Base(props BaseProps) {
+    <html>
+        <head>
+            <title>{props.Title}</title>
+             <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <link rel="stylesheet" href="../../../web/src/output.css">
+        </head>
+        <body>
+            {children... }
+        </body>
+    </html>
+}

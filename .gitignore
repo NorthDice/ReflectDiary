@@ -1,1 +1,4 @@
 .idea
+.env
+web/node_modules
+.env-docker
